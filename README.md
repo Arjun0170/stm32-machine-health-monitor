@@ -2,7 +2,7 @@
 
 A small freestanding C firmware project for an **STM32H743 (Cortex-M7)**. Two emulated MCUs run the monitor and CAN receiver; Renode models USART3, I²C1, SPI4, FDCAN1, SysTick, sensors, and the CAN hub.
 
-`make demo` builds the ARM firmware, runs the two-node scenario, and asserts frames received by the second MCU. No plotting library is needed. Captures: [`evidence/demo.txt`](evidence/demo.txt) and [`evidence/integration.json`](evidence/integration.json).
+`make demo` builds the ARM firmware, runs the two-node scenario, and asserts frames received by the second MCU. The captured 3.6-second run received 17 CAN frames. No plotting library is needed. Captures: [`evidence/demo.txt`](evidence/demo.txt) and [`evidence/integration.json`](evidence/integration.json).
 
 | Receiver time | Observation | Received CAN payload (hex) |
 | ---: | --- | --- |
@@ -16,7 +16,10 @@ A small freestanding C firmware project for an **STM32H743 (Cortex-M7)**. Two em
 
 ## Quick start
 
-On Linux x86-64, install `build-essential`, Python 3, `curl`, and `tar`:
+On Linux x86-64, install `build-essential`, Python 3, `curl`, and `tar`. The
+checked-in evidence was produced with xPack ARM GCC 15.2.1-1.1 and Renode
+1.17.0; pinned archives and provenance are documented in
+[`docs/validation.md`](docs/validation.md).
 
 ```sh
 ./tools/bootstrap.sh
@@ -31,7 +34,7 @@ make ARM_GCC=/path/to/arm-none-eabi-gcc RENODE=/path/to/renode demo
 
 `make demo` runs the receiver-asserted `make integration` scenario. `make host-test` runs native C tests with AddressSanitizer and UndefinedBehaviorSanitizer; `make probe` runs an earlier peripheral check. Python uses its standard library. Localhost sockets and emulator execution must be available; failed runs leave diagnostics in `build/`.
 
-## How it fits together
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -71,38 +74,31 @@ the last good reading. A successful reading clears only the temperature fault.
 | 5 | Sequence, incremented after a frame is queued; wraps modulo 256 |
 | 6–7 | Reserved, zero |
 
-## Interview walkthrough
+## Implementation and validation
 
-1. **Where do decisions live?** [`monitor_core.c`](firmware/monitor_core.c)
-   holds command parsing, state transitions, and explicit byte serialization;
-   [`board.c`](firmware/board.c) performs memory-mapped peripheral I/O.
-2. **How is work scheduled?** [`main()`](firmware/monitor.c#L55) polls UART,
-   samples SPI/I²C on separate deadlines, and tracks periodic and event frames
-   independently—even when both are due together.
-3. **How is vibration handled?** [`monitor_acceleration()`](firmware/monitor_core.c#L35)
-   promotes before negation (so `INT16_MIN` becomes 32768 safely), takes the
-   larger X/Y magnitude, and applies the strict threshold. The test asserts
-   equality clears and the signed minimum remains representable
-   ([`test_alarm()`](tests/test_core.c#L45)).
-4. **What happens when temperature stops responding?**
-   [`temperature_read()`](firmware/board.c#L91) exits its bounded receive poll;
-   [`monitor_temperature()`](firmware/monitor_core.c#L28) retains the old
-   value and sets the fault. This Renode model exercises a **missing response**
-   and timeout; it does not implement or verify a physical I²C NACK path.
-5. **How do we know CAN arrived?** [`can_receive()`](firmware/board.c#L148)
-   reads the second MCU's FIFO. [`assert_received_payloads()`](tests/integration.py#L143)
-   checks ID, DLC, frame format, exact encoding, reserved bytes, and sequence;
-   [`assert_full_sequence()`](tests/integration.py#L243) checks scenario states
-   and continued frames during the sensor fault.
+[`monitor_core.c`](firmware/monitor_core.c) contains command parsing, state
+transitions, vibration thresholding, and CAN payload serialization;
+[`board.c`](firmware/board.c) implements memory-mapped peripheral access.
+[`main()`](firmware/monitor.c#L55) schedules sensor reads and CAN transmission
+while polling UART. Magnitudes promote signed samples before negation, including
+`INT16_MIN` ([`monitor_acceleration()`](firmware/monitor_core.c#L35),
+[`test_alarm()`](tests/test_core.c#L45)). Bounded I²C polling preserves the last
+valid temperature and raises a fault on a missing response
+([`temperature_read()`](firmware/board.c#L91),
+[`monitor_temperature()`](firmware/monitor_core.c#L28)).
+
+Run `make all` to build both ARM ELFs, `make host-test` for native C tests with
+AddressSanitizer and UndefinedBehaviorSanitizer, `make probe` for the peripheral
+probe, `make integration` for receiver-side frame assertions, or `make demo` to
+run that same integration scenario. The integration assertions check CAN ID,
+DLC, frame format, payload encoding, reserved bytes, sequence, scenario states,
+and continued frames during the sensor fault
+([`assert_received_payloads()`](tests/integration.py#L143),
+[`assert_full_sequence()`](tests/integration.py#L243)). Captured receiver frames
+and monitor console output are in [`evidence/demo.txt`](evidence/demo.txt);
+counts, tool versions, stage intervals, and ELF hashes are in
+[`evidence/integration.json`](evidence/integration.json).
 
 ## Scope and evidence
 
 All validation is in Renode: ARM execution, UART RX/TX, I²C reads and missing-response timeout, SPI reads, CAN message RAM and hub delivery, and second-MCU decoding. GPIO alternate-function routing, electrical waveforms, physical timing, clock-stretching, physical I²C NACK, CAN electrical error recovery, and real sensors are not validated. See [validation notes and tool provenance](docs/validation.md).
-
-## Manual exercise
-
-In [`full_sequence()`](tests/integration.py#L171), change only the alarm
-injection from `X -900` to `X 900`, then run `make demo`. The test should still
-pass with the same 900 mg receiver reading and payload
-`fa00840301020000`: the sign changes, while the absolute magnitude does not.
-Restore `X -900` after the exercise.
