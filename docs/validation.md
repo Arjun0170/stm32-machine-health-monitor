@@ -4,7 +4,6 @@ The primary evidence is generated only after the ARM integration assertions pass
 
 - [`evidence/integration.json`](../evidence/integration.json): actual receiver observations, stage intervals, successful-run marker, peripheral transaction counts, compiler/emulator versions, and SHA-256 hashes of both tested ELFs.
 - [`evidence/demo.txt`](../evidence/demo.txt): receiver UART output followed by the monitor UART console.
-- [`evidence/demo.svg`](../evidence/demo.svg): plotted exclusively from that JSON; no fabricated or interpolated sensor samples. Step segments hold each observed value until the next received frame.
 - [`evidence/probe.txt`](../evidence/probe.txt): successful early feasibility probe and independent receiving MCU output.
 
 ## Pinned tool archives
@@ -32,6 +31,8 @@ The early probe passed on H743, so no fallback MCU or host-only bus replacement 
 
 The board layer initializes the STM32 registers used by the emulator, configures 64 MHz SysTick assumptions, and supplies bounded polling for all waits. An I²C transaction writes pointer zero, waits for transfer completion, issues a repeated-start two-byte read, and observes STOP. During the injected missing response, RXNE never arrives; the 10,000-iteration bound expires, STOP is requested, and the next scheduled successful read recovers.
 
+The simulated I²C temperature target uses 7-bit address `0x48`: write register pointer `0x00`, issue a repeated-start read, then read two little-endian signed bytes in tenths of a degree. The SPI accelerometer transaction sends `0x80 | register_address` for a read, then clocks dummy bytes to fetch sequential registers; the seven-byte transaction contains one command and six data bytes. End-of-transfer closes the target's command state. The sensor register maps are summarized in the [README](../README.md#interfaces).
+
 Some clock divisor, timing, NSS, and flag-clear fields are modeled as tags rather than operational timing. Renode logs `Unhandled bits ... Tags:` warnings for those fields. The firmware retains the appropriate register writes; warnings do not imply verified physical timing. The relevant data paths and status fields were checked through the actual ARM firmware. The code is a freestanding emulation demonstration rather than a complete board support package.
 
 ## Recoverable issues resolved
@@ -41,4 +42,4 @@ Some clock divisor, timing, NSS, and flag-clear fields are modeled as tags rathe
 3. A diagnostic counter parser initially expected decimal; Renode properties use hexadecimal. Parsing was corrected and the successful demo rerun.
 4. Localhost sockets require sandbox permission in restricted environments. The test itself uses no network service or external hardware.
 
-The reproducible commands are `make all`, `make host-test`, `make probe`, `make integration`, and `make demo`. Runtime assertions are in `tests/integration.py`; unit assertions are in `tests/test_core.c`. No physical hardware, bus waveforms, or unimplemented NACK behavior is claimed as tested.
+The reproducible commands are `make all`, `make host-test`, `make probe`, and `make demo` (`make demo` runs the same receiver-asserted integration scenario as `make integration`). Python uses its standard library; no plotting package is required. Runtime assertions are in `tests/integration.py`; unit assertions are in `tests/test_core.c`. No physical hardware, bus waveforms, or unimplemented NACK behavior is claimed as tested.

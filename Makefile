@@ -17,7 +17,6 @@ probe: build/probe.elf build/receiver.elf
 integration: all
 	ARM_GCC="$(ARM_GCC)" $(PYTHON) tests/integration.py
 demo: integration
-	$(PYTHON) tools/plot_trace.py
 host-test: | build
 	$(CC) $(CFLAGS) -g -fsanitize=address,undefined firmware/monitor_core.c tests/test_core.c -o build/test_core
 	ASAN_OPTIONS=detect_leaks=0 ./build/test_core

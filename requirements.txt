@@ -1,2 +1,0 @@
-# Only the optional demo plot uses a third-party Python dependency.
-matplotlib==3.10.8
