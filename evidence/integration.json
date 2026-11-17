@@ -1,0 +1,273 @@
+{
+  "target": "STM32H743 (Cortex-M7)",
+  "passed": true,
+  "renode": "Renode v1.17.0",
+  "compiler": "arm-none-eabi-gcc (xPack GNU Arm Embedded GCC x86_64) 15.2.1 20251203",
+  "elf_sha256": {
+    "monitor": "c4617d2e27e2a061df849aabdefd54deca6701ec5c8612465b3ef29a8d1fd67f",
+    "receiver": "67dadf4ec854bedb84d278a2490032e1400bf27b0b3a28699e0bbaddb20d86ca"
+  },
+  "sensor_transactions": {
+    "i2c": 7,
+    "spi": 36
+  },
+  "metrics": {
+    "received_frames": 17,
+    "first_alarm_ms": 700,
+    "alarm_clear_ms": 900,
+    "first_temperature_fault_ms": 1500,
+    "temperature_restored_ms": 2500,
+    "duration_ms": 3600
+  },
+  "stages": [
+    {
+      "name": "baseline",
+      "start_ms": 0,
+      "end_ms": 620
+    },
+    {
+      "name": "lower threshold",
+      "start_ms": 620,
+      "end_ms": 660
+    },
+    {
+      "name": "alarm",
+      "start_ms": 660,
+      "end_ms": 860
+    },
+    {
+      "name": "at threshold clears",
+      "start_ms": 860,
+      "end_ms": 1010
+    },
+    {
+      "name": "alarm again",
+      "start_ms": 1010,
+      "end_ms": 1160
+    },
+    {
+      "name": "temperature missing response",
+      "start_ms": 1160,
+      "end_ms": 2260
+    },
+    {
+      "name": "console during fault",
+      "start_ms": 2260,
+      "end_ms": 2320
+    },
+    {
+      "name": "alarm during fault",
+      "start_ms": 2320,
+      "end_ms": 2380
+    },
+    {
+      "name": "temperature restored",
+      "start_ms": 2380,
+      "end_ms": 3180
+    },
+    {
+      "name": "alarm clears",
+      "start_ms": 3180,
+      "end_ms": 3330
+    },
+    {
+      "name": "signed extrema",
+      "start_ms": 3330,
+      "end_ms": 3480
+    },
+    {
+      "name": "parser recovery",
+      "start_ms": 3480,
+      "end_ms": 3600
+    }
+  ],
+  "frames": [
+    {
+      "t": 0,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "0000000000000000",
+      "temp": 0,
+      "vibration": 0,
+      "flags": 0,
+      "seq": 0
+    },
+    {
+      "t": 500,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00640000010000",
+      "temp": 250,
+      "vibration": 100,
+      "flags": 0,
+      "seq": 1
+    },
+    {
+      "t": 700,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00840301020000",
+      "temp": 250,
+      "vibration": 900,
+      "flags": 1,
+      "seq": 2
+    },
+    {
+      "t": 900,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00900100030000",
+      "temp": 250,
+      "vibration": 400,
+      "flags": 0,
+      "seq": 3
+    },
+    {
+      "t": 1000,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00900100040000",
+      "temp": 250,
+      "vibration": 400,
+      "flags": 0,
+      "seq": 4
+    },
+    {
+      "t": 1100,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00840301050000",
+      "temp": 250,
+      "vibration": 900,
+      "flags": 1,
+      "seq": 5
+    },
+    {
+      "t": 1500,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00840303060000",
+      "temp": 250,
+      "vibration": 900,
+      "flags": 3,
+      "seq": 6
+    },
+    {
+      "t": 1500,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00840303070000",
+      "temp": 250,
+      "vibration": 900,
+      "flags": 3,
+      "seq": 7
+    },
+    {
+      "t": 2000,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00840303080000",
+      "temp": 250,
+      "vibration": 900,
+      "flags": 3,
+      "seq": 8
+    },
+    {
+      "t": 2260,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa00840302090000",
+      "temp": 250,
+      "vibration": 900,
+      "flags": 2,
+      "seq": 9
+    },
+    {
+      "t": 2320,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "fa008403030a0000",
+      "temp": 250,
+      "vibration": 900,
+      "flags": 3,
+      "seq": 10
+    },
+    {
+      "t": 2500,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "85ff8403010b0000",
+      "temp": -123,
+      "vibration": 900,
+      "flags": 1,
+      "seq": 11
+    },
+    {
+      "t": 2500,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "85ff8403010c0000",
+      "temp": -123,
+      "vibration": 900,
+      "flags": 1,
+      "seq": 12
+    },
+    {
+      "t": 3000,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "85ff8403010d0000",
+      "temp": -123,
+      "vibration": 900,
+      "flags": 1,
+      "seq": 13
+    },
+    {
+      "t": 3200,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "85ff9001000e0000",
+      "temp": -123,
+      "vibration": 400,
+      "flags": 0,
+      "seq": 14
+    },
+    {
+      "t": 3400,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "85ff0080010f0000",
+      "temp": -123,
+      "vibration": 32768,
+      "flags": 1,
+      "seq": 15
+    },
+    {
+      "t": 3500,
+      "id": 384,
+      "dlc": 8,
+      "format": 0,
+      "raw": "85ff008001100000",
+      "temp": -123,
+      "vibration": 32768,
+      "flags": 1,
+      "seq": 16
+    }
+  ]
+}

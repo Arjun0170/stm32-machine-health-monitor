@@ -1,0 +1,7 @@
+PROBE BOOT
+PROBE I2C ok=1 temp=250 SPI ok=1 xyz=100 -50 1000 
+PROBE CAN QUEUED
+PROBE UART RX OK
+RECEIVER READY
+RX t=20 id=384 dlc=8 format=0 raw=fa00640000000000 temp=250 vibration=100 flags=0 seq=0
+PASS H743 UART RX/TX, I2C, SPI, two-node Classical CAN

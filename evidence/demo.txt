@@ -1,0 +1,35 @@
+RECEIVER READY
+RX t=0 id=384 dlc=8 format=0 raw=0000000000000000 temp=0 vibration=0 flags=0 seq=0
+RX t=500 id=384 dlc=8 format=0 raw=fa00640000010000 temp=250 vibration=100 flags=0 seq=1
+RX t=700 id=384 dlc=8 format=0 raw=fa00840301020000 temp=250 vibration=900 flags=1 seq=2
+RX t=900 id=384 dlc=8 format=0 raw=fa00900100030000 temp=250 vibration=400 flags=0 seq=3
+RX t=1000 id=384 dlc=8 format=0 raw=fa00900100040000 temp=250 vibration=400 flags=0 seq=4
+RX t=1100 id=384 dlc=8 format=0 raw=fa00840301050000 temp=250 vibration=900 flags=1 seq=5
+RX t=1500 id=384 dlc=8 format=0 raw=fa00840303060000 temp=250 vibration=900 flags=3 seq=6
+RX t=1500 id=384 dlc=8 format=0 raw=fa00840303070000 temp=250 vibration=900 flags=3 seq=7
+RX t=2000 id=384 dlc=8 format=0 raw=fa00840303080000 temp=250 vibration=900 flags=3 seq=8
+RX t=2260 id=384 dlc=8 format=0 raw=fa00840302090000 temp=250 vibration=900 flags=2 seq=9
+RX t=2320 id=384 dlc=8 format=0 raw=fa008403030a0000 temp=250 vibration=900 flags=3 seq=10
+RX t=2500 id=384 dlc=8 format=0 raw=85ff8403010b0000 temp=-123 vibration=900 flags=1 seq=11
+RX t=2500 id=384 dlc=8 format=0 raw=85ff8403010c0000 temp=-123 vibration=900 flags=1 seq=12
+RX t=3000 id=384 dlc=8 format=0 raw=85ff8403010d0000 temp=-123 vibration=900 flags=1 seq=13
+RX t=3200 id=384 dlc=8 format=0 raw=85ff9001000e0000 temp=-123 vibration=400 flags=0 seq=14
+RX t=3400 id=384 dlc=8 format=0 raw=85ff0080010f0000 temp=-123 vibration=32768 flags=1 seq=15
+RX t=3500 id=384 dlc=8 format=0 raw=85ff008001100000 temp=-123 vibration=32768 flags=1 seq=16
+
+MONITOR CONSOLE
+MACHINE HEALTH MONITOR STM32H743 READY
+OK threshold=400
+STATUS t=2260 temp=250 vibration=900 threshold=400 flags=3
+OK threshold=1000
+OK threshold=400
+ERR invalid command or threshold (100..4000 mg)
+ERR invalid command or threshold (100..4000 mg)
+ERR invalid command or threshold (100..4000 mg)
+ERR invalid command or threshold (100..4000 mg)
+ERR invalid command or threshold (100..4000 mg)
+ERR unknown command
+ERR command too long (max 63 bytes)
+OK threshold=100
+OK threshold=4000
+STATUS t=3480 temp=-123 vibration=32768 threshold=4000 flags=1

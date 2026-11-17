@@ -1,0 +1,8 @@
+using "platforms/cpus/stm32h743.repl"
+nvic:
+    systickFrequency: 64000000
+// HSI64 reset clock; override model defaults to keep virtual time consistent.
+usart3:
+    frequency: 64000000
+sensor: Sensors.DemoTemperature @ i2c1 0x48
+accel: Sensors.DemoAccelerometer @ spi4
